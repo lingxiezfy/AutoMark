@@ -1,0 +1,156 @@
+.my-nav-buttom{
+	border-bottom:4px solid #3fb398;
+}
+.my-container-margin{
+	margin-top: 48px;
+}
+.my-nav-dropdown{
+	margin-right: 50px;
+}
+
+.panel-title a:focus,a:hover{
+	color: #d9534f;
+	text-decoration: none;
+}
+
+.my-page-header{
+	margin-top: 25px;
+}
+.my-panel-list{
+	padding: 0;
+}
+.my-panel-list .panel{
+	border: solid gray 1px;
+	float: left;
+	width: 305px;
+	margin-top: 30px !important;
+	margin-left: 20px;
+	margin-bottom: 10px;
+}
+.my-panel-footer{
+	overflow: hidden;
+	background-color: #cccccc;
+}
+.my-grade{
+	font-size: 1.7em;
+	color: red;
+}
+.my-disabled{
+	pointer-events: none; 
+	cursor: not-allowed;
+	opacity: .65;
+}
+.my-title-length{
+	display: inline-block;
+	width: 40%;
+}
+.my-date-length{
+	display: inline-block;
+	width: 10%;
+}
+.my-time-length{
+	display: inline-block;
+	width: 65px;
+}
+.my-line-length{
+	display: inline-block;
+	width: 5px;
+}
+.my-select-input{
+	font-size: 20px;
+}
+.my-code-content{
+	padding-top: 10px;
+}
+.my-center-block{
+	text-align: center;
+}
+
+.my-select-input-min{
+	font-size: 15px;
+}
+.my-table-title-width-long{
+	width: 40%;
+}
+
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 20px;
+}
+
+
+/*
+ * Global add-ons
+ */
+
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+
+/*
+ * Main content
+ */
+
+.main {
+  padding: 20px;
+}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}
+
+
+/*
+ * Placeholder dashboard ideas
+ */
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
+

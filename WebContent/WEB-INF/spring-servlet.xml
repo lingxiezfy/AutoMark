@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:p="http://www.springframework.org/schema/p" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:mvc="http://www.springframework.org/schema/mvc"  
+xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans.xsd  
+                    http://www.springframework.org/schema/context 
+                    http://www.springframework.org/schema/context/spring-context.xsd  
+                    http://www.springframework.org/schema/mvc 
+                    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                    http://www.springframework.org/schema/jdbc 
+         			http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+	<!-- 自动扫描的包名，Spring将在指定的包中查找Controller，Service等组件 -->
+	<context:component-scan base-package="automark.web" />
+	<context:component-scan base-package="automark.service" />
+	<context:component-scan base-package="automark.repository" />
+	
+	<!-- 支持MVC注解映射 -->
+	<mvc:annotation-driven />
+
+	<!-- 设定视图解释类 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" /> <!-- view的路径 -->
+		<property name="suffix" value=".jsp" /> <!-- view的后缀 -->
+	</bean>
+
+	<!-- 访问以下静态资源时不需要经过前端控制器DispatcherServlet -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	 <!-- 数据库连接属性文件配置 -->
+    <context:property-placeholder location="classpath:automark/data/db.properties" system-properties-mode="OVERRIDE"/>
+
+    <!-- 基于tomcat连接池的数据源配置 -->
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
+          p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.url}"
+          p:username="${jdbc.username}" p:password="${jdbc.password}"/>
+
+    <!-- 初始话数据库-->
+    <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script location="${jdbc.initLocation}"/>
+        <jdbc:script location="${jdbc.dataLocation}" encoding="UTF-8"/>
+    </jdbc:initialize-database>  
+	
+	<!-- 配置 spring 的 JdbcTemplate -->  
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  
+    	<constructor-arg ref="dataSource"/>
+	</bean>  
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/json/**"/>
+			<mvc:mapping path="/exam/**"/>
+			<mvc:mapping path="/paper/**"/>
+			<mvc:mapping path="/question/**"/>
+			<bean class="automark.web.LoginInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+</beans>
