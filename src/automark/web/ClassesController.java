@@ -3,6 +3,7 @@ package automark.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,12 +15,13 @@ import automark.service.ClassesService;
 
 @Controller
 public class ClassesController {
+	@Autowired
 	private ClassesService classService; 
 	/**
 	 * 返回全部班级列表json数据
 	 * @return
 	 */
-	@RequestMapping(value="/json/classes",method = RequestMethod.POST)
+	@RequestMapping(value="/json/classes")
 	@ResponseBody
 	public List<Classes> jsonClasses(){
 		List<Classes> list = classService.findAllClasses();

@@ -1,4 +1,5 @@
 <%@ page language="java" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -23,86 +24,14 @@
 
 	<body>
 
-		<header id="header">
-			<nav class="navbar navbar-inverse navbar-fixed-top my-nav-buttom">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-li" aria-expanded="false" aria-controls="navbar">
-			            	<span class="sr-only">Toggle navigation</span>
-			            	<span class="icon-bar"></span>
-			            	<span class="icon-bar"></span>
-			            	<span class="icon-bar"></span>
-		          		</button>
-					<a class="navbar-brand" href="#">程序题智能批改</a>
-					<p class="navbar-text">教师批阅系统</p>
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="navbar-li">
-					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown my-nav-dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">姓名 <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#">注销</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</header>
-
+		<c:import url="header.jsp"></c:import>	
+		
 		<div class="container-fluid my-container-margin">
 			<div class="row">
 				<!--
                 	侧边栏导航
                 -->
-				<div class="col-sm-3 col-md-2 sidebar">
-					<ul class="sidebar-menu">
-						<li class="treeview">
-							<a href="teacher.html">
-								<i class="fa fa-dashboard"></i>
-								<span>程序题库管理</span>
-							</a>
-						</li>
-
-						<li class="treeview">
-							<a href="paperList.html">
-								<i class="fa fa-files-o"></i>
-								<span>试卷管理</span>
-							</a>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-pie-chart"></i>
-								<span>平时测验管理</span>
-								<i class="glyphicon glyphicon-chevron-left pull-right"></i>
-							</a>
-							<ul class="treeview-menu">
-								<li>
-									<a href="#"><i class="fa fa-circle-o"></i> 发布测验</a>
-								</li>
-							</ul>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-laptop"></i>
-								<span>评估统考管理</span>
-								<i class="glyphicon glyphicon-chevron-left pull-right"></i>
-							</a>
-							<ul class="treeview-menu">
-								<li>
-									<a href="#"><i class="fa fa-circle-o"></i>发布统考</a>
-								</li>
-							</ul>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-edit"></i> <span>成绩统计</span>
-							</a>
-						</li>
-					</ul>
-
-				</div>
+				<c:import url="sidebar.jsp"></c:import>
 
 				<!--
 					主体内容
@@ -110,23 +39,24 @@
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 					<h2 class="sub-header clearfix">
 						<span class="pull-left">程序题库</span>
-						<button type="button" class="btn btn-info pull-right">添加题目</button>
+						<a type="button" href="<%=request.getContextPath() %>/question/edit" class="btn btn-info pull-right">添加题目</a>
 						
 						<div class="my-center-block">
-							<form class="form-inline my-select-input-min">
+							<form class="form-inline my-select-input-min" action="" id="searchform">
 								<select id="questionType" name="qtid" class="form-control">
 									<option value="0">题目类别</option>
-									<option value="1">类别1</option>
-									<option value="2">类别2</option>
-									<option value="3">类别3</option>
+									<option value="1">jdbc</option>
+									<option value="2">html</option>
+									<option value="3">算法设计</option>
 								</select>
-								<select id="judgeType" name="jtid" class="form-control">
-									<option value="0">批改方式</option>
-									<option value="1">类别1</option>
-									<option value="2">类别2</option>
-									<option value="3">类别3</option>
+								
+								<select id="readgrant" name="readgrant" class="form-control">
+									<option value="0">选择权限</option>
+									<option value="1">私有</option>
+									<option value="2">公开</option>
 								</select>
-								<input type="text" class="form-control" name="title" placeholder="输入标题搜索">
+								
+								<input type="text" class="form-control" name="key" placeholder="输入标题搜索" value="${key}">
 								<button type="submit" class="btn btn-default">搜索</button>
 							</form>
 						</div>
@@ -144,62 +74,53 @@
 								</tr>
 							</thead>
 							<tbody>
+								<c:forEach items="${questionList}" var="item">
 								<tr>
-									<td>题目1</td>
-									<td>类型1</td>
-									<td>王老师</td>
-									<td>公开</td>
+									<td>${item.title }</td>
+									<td>${item.qType.qtName }</td>
+									<td>${item.user.name }</td>
 									<td>
-										<button type="button" class="btn btn-primary btn-xs">查看</button>
+									<c:choose>
+									<c:when test="${item.readGrant==1 }">
+									私有
+									</c:when>
+									<c:when test="${item.readGrant==2 }">
+									公开
+									</c:when>
+									</c:choose>
 									</td>
-								</tr>
-								<tr>
-									<td>题目2</td>
-									<td>类型1</td>
-									<td>李老师</td>
-									<td>私有</td>
 									<td>
-										<button type="button" class="btn btn-primary btn-xs">查看</button>
-										<button 
+										<a type="button" href="<%=request.getContextPath() %>/question/edit?qid=${item.qid }" class="btn btn-primary btn-xs">查看</a>
+									<c:if test="${item.user.uid==user.uid }">
+										<a  
 											type="button" 
 											class="btn btn-primary btn-xs" 
-											data-target= "#myModal"
-											data-toggle="modal"
-											>删除</button>
-										<button type="button" class="btn btn-primary btn-xs">修改</button>
-										<button type="button" class="btn btn-primary btn-xs">更改权限</button>
+											onclick="del_pop(${item.qid })"
+											>删除</a>
+										<a type="button" href="<%=request.getContextPath() %>/question/edit?qid=${item.qid }" class="btn btn-primary btn-xs">修改</a>
+										<a type="button" onclick="modReadgrant_pop(${item.qid },${item.readGrant })" class="btn btn-primary btn-xs">更改权限</a>
+									</c:if>
 									</td>
 								</tr>
+								</c:forEach>
+								<!-- 
+								data-target= "#myModal"
+											data-toggle="modal"
+								 -->
 							</tbody>
 						</table>
 						<nav class="my-center-block" aria-label="Page navigation">
 							<ul class="pagination">
-								<li>
-									<a href="#" aria-label="Previous">
-										<span aria-hidden="true">&laquo;</span>
-									</a>
+								
+								<c:forEach begin="1" end="${totalPage }" var="page">
+								<c:set var="active" value=""></c:set>
+								<c:if test="${page== currPage}">
+									<c:set var="active" value="active"></c:set>
+								</c:if>
+								<li class="${active }">
+									<a onclick="goPage(${page })"> ${page }</a>
 								</li>
-								<li>
-									<a href="#">...</a>
-								</li>
-								<li class="active">
-									<a href="#">3</a>
-								</li>
-
-								<li>
-									<a href="#">4</a>
-								</li>
-								<li>
-									<a href="#">5</a>
-								</li>
-								<li>
-									<a href="#">...</a>
-								</li>
-								<li>
-									<a href="#" aria-label="Next">
-										<span aria-hidden="true">&raquo;</span>
-									</a>
-								</li>
+								</c:forEach>
 							</ul>
 						</nav>
 					</div>
@@ -213,14 +134,15 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="myModalLabel">删除提示</h4>
+						<h4 class="modal-title" id="myModalLabel">提示</h4>
 					</div>
 					<div class="modal-body">
-						是否确认删除？
+						是否确认操作？
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button type="button" class="btn btn-primary">确认</button>
+						<b id="msg"></b>
+						<button id="refusebtn" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button id="confirbtn" type="button" class="btn btn-primary">确认</button>
 					</div>
 				</div>
 			</div>
@@ -232,10 +154,63 @@
 		<script src="<%=request.getContextPath() %>/resources/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="<%=request.getContextPath() %>/resources/js/sidebar-menu.js"></script>
 
-		<script type="application/javascript">
-			$.sidebarMenu($('.sidebar-menu'))
+		<script type="text/javascript">
+			$.sidebarMenu($('.sidebar-menu'));
+			
+			function goPage(page) {
+				window.location.href="<%=request.getContextPath() %>/question/teacher?"+$('#searchform').serialize()+"&currPage="+page;
+			}
+			$('#questionType').val( ${qtid});
+			$('#readgrant').val( ${readgrant});
+			
+			$('#refusebtn').click(function() {
+				$('#myModal').modal('fide');
+			});
+			function del_pop(id){
+				$('#myModal').modal('show');
+				$('#confirbtn').click(function(){
+					del(id);
+				});
+			}
+			function del(id){
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/question/delete",
+					type:"POST",
+					async:false,
+					data: "qid="+id+"",
+					dataType:"json",
+					success:function(data){
+						$('#msg').html(data.msg);
+						window.location.href="<%=request.getContextPath() %>/question/teacher?"+$('#searchform').serialize()+"&currPage=${currPage}" ;
+					},
+					error:function(){
+						$('#msg').html("操作失败！请重试");
+					}
+				})
+			}
+			function modReadgrant_pop(qid,readgrant){
+				$('#myModal').modal('show');
+				$('#confirbtn').click(function(){
+					modReadgrant(qid,readgrant);
+				});
+			}
+			function modReadgrant(qid,readgrant){
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/question/readGrant/update",
+					type:"POST",
+					async:false,
+					data: "qid="+qid+"&readGrant="+readgrant,
+					dataType:"json",
+					success:function(data){
+						$('#msg').html(data.msg);
+						window.location.href="<%=request.getContextPath() %>/question/teacher?"+$('#searchform').serialize()+"&currPage=${currPage}" ;
+					},
+					error:function(){
+						$('#msg').html("操作失败！请重试");
+					}
+				})
+			}
 		</script>
-
 	</body>
 
 </html>

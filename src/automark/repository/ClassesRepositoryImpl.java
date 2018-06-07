@@ -26,7 +26,6 @@ public class ClassesRepositoryImpl implements ClassesRepository{
 			classes = jdbcTemplate.queryForObject(sql, new ClassesMapper(), uid);
 			System.out.println(classes.getName());
 		}catch (Exception e) {
-			System.out.println("未找到uid ："+uid);
 			classes = null;
 		}
 		return classes;
@@ -58,6 +57,12 @@ public class ClassesRepositoryImpl implements ClassesRepository{
 			teach = null;
 		}
 		return teach;
+	}
+
+	@Override
+	public List<Classes> findAllClasses() {
+		String sql = "select * from classes";
+		return jdbcTemplate.query(sql, new ClassesMapper());
 	}
 
 

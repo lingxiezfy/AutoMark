@@ -3,6 +3,7 @@ package automark.model;
 public class ExamDo {
 	private int edid;
 	private int uid;
+	private int eid;
 	private Exam exam;
 	private int nowstatus;
 	private int totalgrade;
@@ -35,5 +36,11 @@ public class ExamDo {
 	}
 	public void setExam(Exam exam) {
 		this.exam = exam;
+	}
+	public int getEid() {
+		return eid;
+	}
+	public void setEid(int eid) {
+		this.eid = eid;
 	}
 }

@@ -1,4 +1,6 @@
 <%@ page language="java" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -24,86 +26,14 @@
 
 	<body>
 
-		<header id="header">
-			<nav class="navbar navbar-inverse navbar-fixed-top my-nav-buttom">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-li" aria-expanded="false" aria-controls="navbar">
-			            	<span class="sr-only">Toggle navigation</span>
-			            	<span class="icon-bar"></span>
-			            	<span class="icon-bar"></span>
-			            	<span class="icon-bar"></span>
-		          		</button>
-					<a class="navbar-brand" href="#">程序题智能批改</a>
-					<p class="navbar-text">教师批阅系统</p>
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="navbar-li">
-					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown my-nav-dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">姓名 <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#">注销</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</header>
+		<c:import url="header.jsp"></c:import>
 
 		<div class="container-fluid my-container-margin">
 			<div class="row">
 				<!--
                 	侧边栏导航
                 -->
-				<div class="col-sm-3 col-md-2 sidebar">
-					<ul class="sidebar-menu">
-						<li class="treeview">
-							<a href="teacher.html">
-								<i class="fa fa-dashboard"></i>
-								<span>程序题库管理</span>
-							</a>
-						</li>
-
-						<li class="treeview">
-							<a href="paperList.html">
-								<i class="fa fa-files-o"></i>
-								<span>试卷管理</span>
-							</a>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-pie-chart"></i>
-								<span>平时测验管理</span>
-								<i class="glyphicon glyphicon-chevron-left pull-right"></i>
-							</a>
-							<ul class="treeview-menu">
-								<li>
-									<a href="#"><i class="fa fa-circle-o"></i> 发布测验</a>
-								</li>
-							</ul>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-laptop"></i>
-								<span>评估统考管理</span>
-								<i class="glyphicon glyphicon-chevron-left pull-right"></i>
-							</a>
-							<ul class="treeview-menu">
-								<li>
-									<a href="#"><i class="fa fa-circle-o"></i>发布统考</a>
-								</li>
-							</ul>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-edit"></i> <span>成绩统计</span>
-							</a>
-						</li>
-					</ul>
-
-				</div>
+				<c:import url="sidebar.jsp"></c:import>
 
 				<!--
 					主体内容
@@ -111,12 +41,11 @@
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 					<h2 class="sub-header clearfix">
 						<span class="pull-left">统考管理</span>
-						<button 
+						<a 
 							type="button" 
 							class="btn btn-info pull-right"
-							data-target= "#modelExam"
-							data-toggle="modal"
-							>发布统考</button>
+							onclick="edit_pop(0)"
+							>发布统考</a>
 						
 					</h2>
 					<div class="table-responsive">
@@ -126,36 +55,44 @@
 									<th class="my-table-title-width-long">考试名称</th>
 									<th>开始时间</th>
 									<th>结束时间</th>
+									<th>当前状态</th>
 									<th>操作</th>
 								</tr>
 							</thead>
 							<tbody>
+							<c:forEach items="${accessExams}" var="item">
+								<c:set var="nowDate" value="<%=System.currentTimeMillis()%>"></c:set>
+								<c:choose>
+									<c:when test="${nowDate < item.accessExam.startTime.time}">
+										<c:set var="accessStatus" value="（未开始）"></c:set>
+									</c:when>
+									<c:when test="${nowDate >= item.accessExam.startTime.time && nowDate <= item.accessExam.endTime.time}">
+										<c:set var="accessStatus" value="（正在考试）"></c:set>
+									</c:when>
+									<c:when test="${nowDate >= item.accessExam.endTime.time}">
+										<c:set var="accessStatus" value="（已结束）"></c:set>
+									</c:when>
+								</c:choose>
 								<tr>
-									<td>统考1</td>
-									<td>2018-04-22 9：00</td>
-									<td>2018-04-22 11：00</td>
+									<td>${item.accessExam.title }</td>
+									<td><fmt:formatDate value="${item.accessExam.startTime }" type="both"/></td>
+									<td><fmt:formatDate value="${item.accessExam.endTime }" type="both"/></td>
+									<td> ${accessStatus}</td>
 									<td>
-										<button type="button" 
+										<c:if test="${item.accessExam.uid == item.judgeGrant.uid }">
+										<a type="button" 
 											class="btn btn-primary btn-xs"
-											data-target= "#modelExam"
-											data-toggle="modal"
-											>修改</button>
-										<button type="button" 
+											onclick="edit_pop(${item.accessExam.eid})"
+											>修改</a>
+										<a type="button" 
 											class="btn btn-primary btn-xs"
-											data-target= "#myModal"
-											data-toggle="modal"
-											>删除</button>
-										<button type="button" class="btn btn-primary btn-xs">批阅</button>
+											onclick="del_pop(${item.accessExam.eid})"
+											>删除</a>
+										</c:if>
+										<a type="button" href="" class="btn btn-primary btn-xs">批阅</a>
 									</td>
 								</tr>
-								<tr>
-									<td>统考2</td>
-									<td>2018-04-22 9：00</td>
-									<td>2018-04-22 11：00</td>
-									<td>
-										<button type="button" class="btn btn-primary btn-xs">批阅</button>
-									</td>
-								</tr>
+							</c:forEach>
 							</tbody>
 						</table>
 					</div>
@@ -164,26 +101,27 @@
 		</div>
 
 		<!-- Modal -->
-		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="myModalLabel1">删除提示</h4>
+						<h4 class="modal-title" id="myModalLabel">提示</h4>
 					</div>
 					<div class="modal-body">
-						是否确认删除？
+						是否确认操作？
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button type="button" class="btn btn-primary">确认</button>
+						<b id="msg"></b>
+						<button id="refusebtn" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button id="confirbtn" type="button" class="btn btn-primary">确认</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- Modal -->
-		<div class="modal fade" id="modelExam" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+		<div class="modal fade" id="edit_exam" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -191,8 +129,8 @@
 						<h4 class="modal-title" id="myModalLabel2">发布统考</h4>
 					</div>
 					<div class="modal-body">
-						<form class="form-horizontal">
-
+						<form class="form-horizontal" id="edit_form">
+							<input type="hidden" name="eid" value="0"/>
 							<div class="form-group">
 								<label for="title" class="col-sm-2 control-label">统考名称</label>
 								<div class="col-sm-10">
@@ -200,17 +138,17 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="readGrant" class="col-sm-2 control-label">测试类型</label>
+								<label for="examtype" class="col-sm-2 control-label">测试类型</label>
 								<div class="col-sm-4">
-									<select id="readGrant" class="form-control" disabled="disabled">
+									<select id="examtype" class="form-control" disabled="disabled" name="type">
 										<option value="2">评估统考</option>
 									</select>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="readGrant" class="col-sm-2 control-label">选择试卷</label>
+								<label for="paperList" class="col-sm-2 control-label">选择试卷</label>
 								<div class="col-sm-4">
-									<select id="readGrant" class="form-control">
+									<select id="paperList" class="form-control" name="pid">
 										<option value="0">请选择</option>
 										<option value="1">试卷1</option>
 										<option value="2">试卷2</option>
@@ -218,55 +156,38 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="readGrant" class="col-sm-2 control-label">选择班级</label>
+								<label for="classes" class="col-sm-2 control-label">选择班级</label>
 								<div class="col-sm-5">
-									<div class="checkbox">
-										<label>
-          									<input type="checkbox" checked="true" value="1"> <span>152012</span>
-        								</label>
-										<label>
-          									<input type="checkbox" checked="true" value="1"> <span>152013</span>
-        								</label>
-										<label>
-          									<input type="checkbox" checked="true" value="1"> <span>152014</span>
-        								</label>
-										<label>
-          									<input type="checkbox" checked="true" value="1"> <span>152013</span>
-        								</label>
+									<div class="checkbox" id="classes">
+										
 									</div>
 								</div>
 								<div class="col-sm-4">
-									<button type="button" class="btn btn-success">获取全部班级</button>
+									<button type="button" id="classes_find" class="btn btn-success">获取全部班级</button>
 								</div>
 							</div>
 							
 							<div class="form-group">
-								<label for="readGrant" class="col-sm-2 control-label">选择阅卷老师</label>
+								<label for="teachers" class="col-sm-2 control-label">选择阅卷老师</label>
 								<div class="col-sm-5">
-									<div class="checkbox">
-										<label>
-          									<input type="checkbox" checked="true" value="1"> <span>李老师</span>
-        								</label>
-										<label>
-          									<input type="checkbox" checked="true" value="1"> <span>张老师</span>
-        								</label>
+									<div class="checkbox" id="teachers">
 									</div>
 								</div>
 								<div class="col-sm-4">
-									<button type="button" class="btn btn-success">获取全部教师</button>
+									<button type="button" id="teacher_find" class="btn btn-success">获取全部教师</button>
 								</div>
 							</div>
 							
 							<div class="form-group">
 								<label for="title" class="col-sm-2 control-label">开始时间</label>
 								<div class="col-sm-4">
-									<input type="datetime" class="form-control" id="starttime" name="starttime">
+									<input type="datetime" class="form-control" id="startTime" name="startTime">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="title" class="col-sm-2 control-label">截止时间</label>
 								<div class="col-sm-4">
-									<input type="datetime" class="form-control" id="endtime" name="endtime">
+									<input type="datetime" class="form-control" id="endTime" name="endTime">
 								</div>
 							</div>
 
@@ -275,10 +196,10 @@
 					</div>
 					<div class="modal-footer">
 						<div>
-							<span class="pull-left text-danger">错误信息</span>
+							<span class="pull-left text-danger" id="edit_msg"></span>
 						</div>
 						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button type="button" class="btn btn-primary">保存</button>
+						<button type="button" id="edit_save" class="btn btn-primary">保存</button>
 					</div>
 				</div>
 			</div>
@@ -306,11 +227,113 @@
 				//选择板所在输入框位置
 				pickerPosition: "bottom-left"
 			};
-
+			
+			$('#paperList').focus(function() {
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/paper/find",
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						$('#paperList option').remove();
+						$('#paperList').append("<option value='0'>请选择</option>");
+						for(var i=0;i<data.length;i++){
+							$('#paperList').append("<option value='"+data[i].pid+"'>"+data[i].title+"</option>");
+						}
+					},
+					error:function(){
+						$('#edit_msg').html("操作失败！请重试");
+					}
+				})
+			});
+			
+			$('#classes_find').click(function() {
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/classes",
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						var str = "";
+						$('#classes').html(str);
+						for(var i=0;i<data.length;i++){
+							str+="<label><input type='checkbox' name='cids' value='"+data[i].cid+"'> <span>"+data[i].name+"</span></label>";
+						}
+						$('#classes').html(str);
+					},
+					error:function(){
+						$('#edit_msg').html("操作失败！请重试");
+					}
+				})
+				return false;
+			});
+			
+			$('#teacher_find').click(function() {
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/teachers",
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						var str = "";
+						$('#teachers').html(str);
+						for(var i=0;i<data.length;i++){
+							str+="<label><input type='checkbox' name='uids' value='"+data[i].uid+"'> <span>"+data[i].name+"</span></label>";
+						}
+						$('#teachers').html(str);
+					},
+					error:function(){
+						$('#edit_msg').html("操作失败！请重试");
+					}
+				})
+				return false;
+			});
+			
+			$('#edit_save').click(function() {
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/exam/save",
+					type:"get",
+					async:false,
+					data: $('#edit_form').serialize(),
+					dataType:"json",
+					success:function(data){
+						$('#edit_msg').html("操作成功！");
+						window.location.reload();
+					},
+					error:function(){
+						$('#edit_msg').html("操作失败！请重试");
+					}
+				})
+			});
+			
+			function edit_pop(eid) {
+				$('#edit_exam').modal('show');
+			}
+			
+			function del_pop(id){
+				$('#myModal').modal('show');
+				$('#confirbtn').click(function(){
+					del(id);
+				});
+			}
+			function del(id){
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/exam/access/delete",
+					type:"POST",
+					async:false,
+					data: "eid="+id+"",
+					dataType:"json",
+					success:function(data){
+						$('#msg').html(data.msg);
+						window.location.href="<%=request.getContextPath() %>/exam/assess" ;
+					},
+					error:function(){
+						$('#msg').html("操作失败！请重试");
+					}
+				})
+			}
+			
 			$(function() {
 
-				var picker1 = $('#starttime').datetimepicker();
-				var picker2 = $("#endtime").datetimepicker();
+				var picker1 = $('#startTime').datetimepicker();
+				var picker2 = $("#endTime").datetimepicker();
 
 				//动态设置最小值(选择前面一个日期后：后面一个日期不能小于前面一个)
 				picker1.on('changeDate', function(e) {

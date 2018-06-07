@@ -43,8 +43,9 @@ public class UserController {
 				session.setAttribute("classes", classes);
 				return "redirect: /automark/exam/student";
 			}
+			//获取教师的教学列表
 			List<Teach> teaches =  classesService.findTeachesByTeacherId(user.getUid());
-			if(teaches != null || teaches.size() >0) {
+			if(teaches != null && teaches.size() >0) {
 				session.setAttribute("teaches", teaches);
 			}
 			return "redirect: /automark/question/teacher";

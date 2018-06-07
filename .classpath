@@ -19,5 +19,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/junit-4.12"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/hamcrest-1.3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/spring-tx-5.0.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jackson-fasterxml"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -15,8 +15,7 @@ public class ClassesServiceImpl implements ClassesService{
 	ClassesRepository classesRepository;
 	@Override
 	public List<Classes> findAllClasses() {
-		// TODO Auto-generated method stub
-		return null;
+		return classesRepository.findAllClasses();
 	}
 
 	@Override

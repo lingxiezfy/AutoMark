@@ -4,6 +4,7 @@ public class MakePaper {
 	private int mpid;
 	private int pid;
 	private int qid;
+	private Question question;
 	private int score;
 	public int getMpid() {
 		return mpid;
@@ -28,5 +29,11 @@ public class MakePaper {
 	}
 	public void setScore(int score) {
 		this.score = score;
+	}
+	public Question getQuestion() {
+		return question;
+	}
+	public void setQuestion(Question question) {
+		this.question = question;
 	}
 }

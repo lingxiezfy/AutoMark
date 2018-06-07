@@ -1,6 +1,7 @@
 package automark.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import automark.dto.AccessExamDto;
 import automark.dto.ExamDetailDto;
 import automark.dto.ExamInfoDto;
 import automark.model.Classes;
@@ -55,13 +57,66 @@ public class ExamController {
 		if(nowstatus <= 0) {
 			nowstatus = 1;
 		}
-		ExamDetailDto examDetailDto = examService.getExamDoDetailByIndex(edid, nowstatus);
 		List<Integer> edtidList = examService.getExamDoDetailIdList(edid);
+		System.out.println(Arrays.toString(edtidList.toArray()));
+		ExamDetailDto examDetailDto = examService.getExamDoDetailByIndex(edid, nowstatus);
+		
 		session.setAttribute("examDetail", examDetailDto);
 		session.setAttribute("edtidList",edtidList);
 		session.setAttribute("edid", edid);
 		session.setAttribute("nowstatus", nowstatus);
 		return "student/doExam";
+	}
+	
+
+	
+	/**
+	 * 测试代码，返回测试结果
+	 * @return
+	 */
+	@RequestMapping(value="/json/exam/test")
+	@ResponseBody
+	public ExamDoDetail jsonExamTest(Integer edtid,
+									Integer qid,
+									Integer qtid,
+									Integer jtid,
+									Integer score,
+									Integer answertype,
+									String stuanswer) {
+		System.out.println("学生答案"+edtid);
+		ExamDoDetail examDoDetail = examService.testCode(edtid,qid,qtid,jtid,score,answertype,stuanswer);
+		
+		return examDoDetail;
+	}
+	/**
+	 * 考生提交试卷
+	 * @param edtid
+	 * @param qid
+	 * @param qtid
+	 * @param jtid
+	 * @param score
+	 * @param answertype
+	 * @param stuanswer
+	 * @return
+	 */
+	@RequestMapping(value="/exam/student/submit")
+	@ResponseBody
+	public String studentExamSubmit(Integer edtid,
+			Integer qid,
+			Integer qtid,
+			Integer jtid,
+			Integer score,
+			Integer answertype,
+			String stuanswer,HttpSession session) {
+		//修改状态为-1
+		int edid = (int)session.getAttribute("edid");
+		examService.setNowStatus(edid,-1);
+		//保存
+
+		examService.testCode(edtid,qid,qtid,jtid,score,answertype,stuanswer);
+
+		return "ok";
+		
 	}
 	
 	/**
@@ -71,41 +126,19 @@ public class ExamController {
 	 */
 	@RequestMapping(value="/json/exam/detail")
 	@ResponseBody
-	public ExamDetailDto jsonExamDetail(int edtid) {
-		ExamDetailDto examDetail = examService.getExamDoDetailById(edtid);
-		//同时将当前试题修改为该id
-		return examDetail;
+	public ExamDoDetail jsonExamDetail(int edtid) {
+		ExamDoDetail examDoDetail = examService.getExamDoDetailById(edtid);
+		
+		return examDoDetail;
 	}
 	
-	/**
-	 * 测试代码，返回测试结果
-	 * @return
-	 */
-	@RequestMapping(value="/json/exam/test")
-	@ResponseBody
-	public ExamDoDetail jsonExamTest(ExamDoDetail examDoDetail) {
-		ExamDoDetail examDetailResult = new ExamDoDetail();
-		return examDetailResult;
-	}
-	
-	/**
-	 * 保存测试详情
-	 * @param examDetail
-	 */
-	@RequestMapping(value="/json/examDetail/save")
-	@ResponseBody
-	public Message jsonExamDetailSave(ExamDoDetail examDetail) {
-		//返回保存状态信息
-		Message message = new Message();
-		return message;
-	}
 	
 	/**
 	 * 进入 平时测验管理页面
 	 * @return
 	 */
 	@RequestMapping(value="/exam/daliy")
-	public String daliyExam(int uid, Model model) {
+	public String daliyExam(Model model) {
 		//取得教师教学的班级信息
 		return "exam/daliyExam";
 	}
@@ -115,9 +148,11 @@ public class ExamController {
 	 * @return
 	 */
 	@RequestMapping(value="/exam/assess")
-	public String assessExam(int uid, Model model) {
-		//取得教师可见的统考信息列表（可批阅的+教师自创的）
-		return "exam/assessExam";
+	public String assessExam(HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		List<AccessExamDto> accessExams= examService.findAccessExams(user.getUid());
+		session.setAttribute("accessExams", accessExams);
+		return "exam/accessExam";
 	}
 	/**
 	 * 获取教师所带班级的测试列表 json数据
@@ -177,6 +212,26 @@ public class ExamController {
 		return message;
 	}
 	
+	@RequestMapping(value="/json/exam/save")
+	@ResponseBody
+	public Message jsonExamSave(Exam exam,Integer[] cids,Integer[] uids,HttpSession session) {
+		System.out.println(exam.getTitle());
+		System.out.println(exam.getEndTime().toString());
+		System.out.println("cid:"+Arrays.toString(cids));
+		System.out.println("uid:"+Arrays.toString(uids));
+		if(uids == null) {
+			User user = (User) session.getAttribute("user");
+			uids = new Integer[]{user.getUid()};
+		}
+		int count = examService.addExam(exam,cids,uids);
+		Message message = new Message();
+		if(count >0)
+			message.setMsg("成功！");
+		else 
+			message.setMsg("失败");
+		return message;
+	}
+	
 	/**
 	 * 删除某个班级的某个测试信息
 	 * @param classesId 班级id
@@ -197,7 +252,12 @@ public class ExamController {
 	@RequestMapping(value="/json/exam/access/delete")
 	@ResponseBody
 	public Message jsonExamAccessDelete(int eid) {
+		int count = examService.deleteExamAccess(eid);
 		Message message = new Message();
+		if(count >0)
+			message.setMsg("删除成功！");
+		else 
+			message.setMsg("删除失败");
 		return message;
 	}
 	

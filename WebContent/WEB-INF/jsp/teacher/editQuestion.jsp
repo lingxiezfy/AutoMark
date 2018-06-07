@@ -1,4 +1,6 @@
 <%@ page language="java" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -27,111 +29,42 @@
 
 	<body>
 
-		<header id="header">
-			<nav class="navbar navbar-inverse navbar-fixed-top my-nav-buttom">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-li" aria-expanded="false" aria-controls="navbar">
-			            	<span class="sr-only">Toggle navigation</span>
-			            	<span class="icon-bar"></span>
-			            	<span class="icon-bar"></span>
-			            	<span class="icon-bar"></span>
-		          		</button>
-					<a class="navbar-brand" href="#">程序题智能批改</a>
-					<p class="navbar-text">教师批阅系统</p>
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="navbar-li">
-					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown my-nav-dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">姓名 <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#">注销</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</header>
+		<c:import url="header.jsp"></c:import>	
 
 		<div class="container-fluid my-container-margin">
 			<div class="row">
 				<!--
                 	侧边栏导航
                 -->
-				<div class="col-sm-3 col-md-2 sidebar">
-					<ul class="sidebar-menu">
-						<li class="treeview">
-							<a href="teacher.html">
-								<i class="fa fa-dashboard"></i>
-								<span>程序题库管理</span>
-							</a>
-						</li>
-
-						<li class="treeview">
-							<a href="paperList.html">
-								<i class="fa fa-files-o"></i>
-								<span>试卷管理</span>
-							</a>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-pie-chart"></i>
-								<span>平时测验管理</span>
-								<i class="glyphicon glyphicon-chevron-left pull-right"></i>
-							</a>
-							<ul class="treeview-menu">
-								<li>
-									<a href="#"><i class="fa fa-circle-o"></i> 发布测验</a>
-								</li>
-							</ul>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-laptop"></i>
-								<span>评估统考管理</span>
-								<i class="glyphicon glyphicon-chevron-left pull-right"></i>
-							</a>
-							<ul class="treeview-menu">
-								<li>
-									<a href="#"><i class="fa fa-circle-o"></i>发布统考</a>
-								</li>
-							</ul>
-						</li>
-						<li class="treeview">
-							<a href="#">
-								<i class="fa fa-edit"></i> <span>成绩统计</span>
-							</a>
-						</li>
-					</ul>
-
-				</div>
+				<c:import url="sidebar.jsp"></c:import>
 
 				<!--
 					主体内容
 				-->
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 					<h2 class="sub-header clearfix">
-						<span class="pull-left">添加题目</span>
+						<span class="pull-left"> ${action}题目</span>
 					</h2>
 					<div class="container-fluid">
-						<form class="form-horizontal">
+						<!-- 表单开始 -->
+						<form class="form-horizontal" id="editform" >
+							<input type="hidden" name="qid" value="${question.qid }"/>
+							<input type="hidden" name="uid" value="${question.uid }"/>
 							<div class="form-group">
 								<label for="questionType" class="col-sm-2 control-label">题目类型</label>
 								<div class="col-sm-4">
-									<select id="questionType" class="form-control">
-										<option value="0">请选择</option>
-										<option value="1">类别1</option>
-										<option value="2">类别2</option>
-										<option value="3">类别3</option>
+									<select id="questionType" name="qtid" class="form-control">
+										<option value="0">选择类别</option>
+										<option value="1">jdbc</option>
+										<option value="2">html</option>
+										<option value="3">算法设计</option>
 									</select>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="readGrant" class="col-sm-2 control-label">浏览权限</label>
 								<div class="col-sm-4">
-									<select id="readGrant" class="form-control">
+									<select id="readgrant" name="readGrant" class="form-control">
 										<option value="1">私有</option>
 										<option value="2">公开</option>
 									</select>
@@ -140,31 +73,52 @@
 							<div class="form-group">
 								<label for="judgeType" class="col-sm-2 control-label">批阅方式</label>
 								<div class="col-sm-4">
-									<select id="judgeType" class="form-control">
+									<select id="judgeType" name="jtid" class="form-control">
 										<option value="1">手动批阅</option>
 										<option value="2">解释型</option>
-										<option value="3">算法</option>
+										<option value="3">输入输出型</option>
 									</select>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label">用例1</label>
+							<c:if test="${question.jtid == 3}">
+								<c:forEach items="${answers}" var="item" varStatus="status">
+								<div class="form-group">
+								<label class="col-sm-2 control-label">用例${status.index+1 }</label>
 								<div class="col-sm-3">
-									<input type="text" class="form-control" id="title" name="title" placeholder="输入">
+									<input type="text" class="form-control" id="title" name="input[]" placeholder="输入" value="${item.input }">
 								</div>
 								<div class="col-sm-3">
-									<input type="text" class="form-control" id="title" name="title" placeholder="输出">
+									<input type="text" class="form-control" id="title" name="input[]" placeholder="输出" value="${item.output }">
 								</div>
-								<div class="col-sm-2">
-									<button type="submit" class="btn btn-primary">
-										<span class="glyphicon glyphicon-plus-sign"></span>
-									</button>
+								<c:choose>
+									<c:when test="${(status.index+1)==fn:length(answers)}">
+										<div class="col-sm-1">
+											<button type="button" class="btn btn-danger ">
+												<span class="glyphicon glyphicon-minus-sign"></span>
+											</button>
+										</div>
+										<div class="col-sm-1">
+											<button type="button" class="btn btn-primary ">
+												<span class="glyphicon glyphicon-plus-sign"></span>
+											</button>
+										</div>
+									</c:when>
+									<c:when test="${(status.index+1)<fn:length(answers)}">
+										<div class="col-sm-2">
+											<button type="button" class="btn btn-danger ">
+												<span class="glyphicon glyphicon-minus-sign"></span>
+											</button>
+										</div>
+									</c:when>
+								</c:choose>
 								</div>
-							</div>
+								</c:forEach>
+							</c:if>
+							
 							<div class="form-group">
 								<label for="title" class="col-sm-2 control-label">标题</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" id="title" name="title" placeholder="输入题目标题">
+									<input type="text" class="form-control" id="title" name="title" placeholder="输入题目标题" value="${question.title}">
 								</div>
 							</div>
 							<div class="form-group">
@@ -172,39 +126,22 @@
 								<div class="col-sm-10">
 									<textarea 
 										class="form-control" 
-										id="description" 
-										name="description" 
+										id="description"
 										rows="8" 
 										cols="30">
+										${question.description}
 									</textarea>
 								</div>
 							</div>
-							
-							<div class="form-group">
-								<div class="col-sm-offset-2 col-sm-10">
-									<button type="submit" class="btn btn-primary">保存</button>
-								</div>
-							</div>
 						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal -->
-		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="myModalLabel">删除提示</h4>
-					</div>
-					<div class="modal-body">
-						是否确认删除？
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button type="button" class="btn btn-primary">确认</button>
+						
+						
+						<div class="col-sm-offset-2 col-sm-10">
+									<button id="save" class="btn btn-primary">保存</button>
+									<b id="msg"></b>
+								</div>
+						
+						<!-- 表单结束 -->
 					</div>
 				</div>
 			</div>
@@ -219,7 +156,31 @@
 		<script type="application/javascript">
 			$.sidebarMenu($('.sidebar-menu'));
 			
-			CKEDITOR.replace('description');
+			var editor = CKEDITOR.replace('description');
+			
+			$('#questionType').val(${question.qtid});
+			$('#readGrant').val(${question.readGrant});
+			$('#judgeType').val(${question.jtid});
+			
+			
+			$('#save').click(function(){
+				
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/question/save",
+					type:"POST",
+					async:true,
+					data: $("#editform").serialize()+"&description="+CKEDITOR.instances.description.getData(),
+					dataType:"json",
+					success:function(data){
+						window.location.href='<%=request.getContextPath() %>/question/teacher';
+						$('#msg').html(data.msg);
+					},
+					error:function(){
+						$('#msg').html("增加失败");
+					}
+				})
+			});
+			
 		</script>
 
 	</body>

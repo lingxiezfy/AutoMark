@@ -27,4 +27,9 @@ public interface ClassesRepository {
 	 * @return
 	 */
 	public Teach findTeachInfoByTeacherIdAndClassId(int uid,int cid);
+	/**
+	 * 获取所有班级列表
+	 * @return
+	 */
+	public List<Classes> findAllClasses();
 }

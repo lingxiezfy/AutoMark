@@ -11,6 +11,16 @@ import automark.vo.ExamGrade;
 
 @Controller
 public class GradeController {
+	
+	/**
+	 * 进入gradeView页面
+	 * @return
+	 */
+	@RequestMapping(value="/teacher/grade")
+	public String teacherGrade() {
+		return "teacher/gradeView";
+	}
+	
 	/**
 	 * 获取测试成绩信息
 	 * @param uid 教师id

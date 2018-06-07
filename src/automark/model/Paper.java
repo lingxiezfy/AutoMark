@@ -2,6 +2,7 @@ package automark.model;
 
 public class Paper {
 	private int pid;
+	private int uid;
 	private User paperTeacher;
 	private int readGrant;
 	private String title;
@@ -36,5 +37,11 @@ public class Paper {
 	}
 	public void setPaperTeacher(User paperTeacher) {
 		this.paperTeacher = paperTeacher;
+	}
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 }

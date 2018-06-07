@@ -22,7 +22,7 @@ INSERT INTO study VALUES (null, 7, 3);
 INSERT INTO study VALUES (null, 8, 4);
 INSERT INTO judgetype values (null,'手动批阅');/* 1 */
 INSERT INTO judgetype values (null,'解释型');/* 2 */
-INSERT INTO judgetype values (null,'算法');/* 3 */
+INSERT INTO judgetype values (null,'输入输出型');/* 3 */
 insert into questiontype values (null,'jdbc');
 insert into questiontype values (null,'html');
 insert into questiontype values (null,'算法设计');
@@ -32,8 +32,52 @@ insert into question values (null,2,1,1,1,'题目3','描述3');
 insert into question values (null,5,1,1,1,'题目4','描述4');
 insert into question values (null,5,1,1,1,'题目5','描述5');
 insert into question values (null,5,1,1,1,'题目6','描述6');
+insert into question values (null,5,1,1,1,'题目7','描述6');
+insert into question values (null,2,1,1,1,'题目8','描述3');
+insert into question values (null,2,1,1,1,'题目9','描述3');
+insert into question values (null,2,1,1,1,'题目10','描述10');
+insert into question values (null,2,1,1,1,'题目11','描述11');
+insert into question values (null,2,1,1,1,'题目12','描述12');
+insert into question values (null,2,1,1,1,'题目13','描述13');
+insert into question values (null,2,1,1,1,'题目14','描述14');
+insert into question values (null,2,1,1,1,'题目15','描述15');
+insert into question values (null,2,1,1,1,'题目16','描述16');
+insert into question values (null,2,1,1,1,'题目17','描述17');
+insert into question values (null,2,1,1,1,'题目18','描述18');
+insert into question values (null,2,1,1,1,'题目19','描述19');
+insert into question values (null,2,1,1,1,'题目20','描述20');
+insert into question values (null,2,1,1,1,'题目21','描述21');
+insert into question values (null,2,1,1,1,'题目22','描述22');
+insert into question values (null,2,1,1,1,'题目23','描述23');
+insert into question values (null,2,1,1,1,'题目24','描述24');
+insert into question values (null,2,1,1,1,'题目25','描述25');
+insert into question values (null,2,3,3,1,'题目26','描述26');
+insert into question values (null,2,3,3,1,'题目27','描述27');
+insert into question values (null,2,3,3,1,'题目28','描述28');
+insert into question values (null,2,3,3,1,'题目29','描述29');
+
+insert into answer values(null,26,'输入1','输出1');
+insert into answer values(null,26,'输入2','输出2');
+insert into answer values(null,26,'输入3','输出3');
+insert into answer values(null,26,'输入4','输出4');
+
+insert into answer values(null,27,'输入1','输出1');
+insert into answer values(null,27,'输入2','输出2');
+insert into answer values(null,27,'输入3','输出3');
+insert into answer values(null,27,'输入4','输出4');
+
+insert into answer values(null,28,'输入1','输出1');
+insert into answer values(null,28,'输入2','输出2');
+
+insert into answer values(null,29,'输入1','输出1');
+insert into answer values(null,29,'输入2','输出2');
+
 insert into paper values(null,2,1,'教师1试卷',100);
 insert into paper values(null,5,1,'教师2试卷',100);
+insert into paper values(null,2,1,'教师3试卷',100);
+insert into paper values(null,5,1,'教师4试卷',100);
+insert into paper values(null,2,1,'教师5试卷',100);
+insert into paper values(null,5,1,'教师6试卷',100);
 /*试卷1*/
 insert into makepaper values(null,1,1,30);
 insert into makepaper values(null,1,2,30);
@@ -42,9 +86,13 @@ insert into makepaper values(null,1,3,40);
 insert into makepaper values(null,2,4,30);
 insert into makepaper values(null,2,5,30);
 insert into makepaper values(null,2,6,30);
-insert into exam values (null,1,2,1,'2018-5-25 12:00:00','2018-5-30 14:00:00','平时测试1');
-insert into exam values (null,2,5,2,'2018-5-24 12:00:00','2018-5-29 14:00:00','评估统考1');
+insert into exam values (null,1,2,1,'2018-5-25 12:00:00','2018-5-31 14:00:00','平时测试1');
+insert into exam values (null,2,5,2,'2018-5-24 12:00:00','2018-06-05 14:00:00','评估统考1');
 insert into exam values (null,1,5,1,'2018-5-29 12:00:00','2018-5-29 14:00:00','平时测试2');
+insert into exam values (null,1,2,2,'2018-5-25 12:00:00','2018-5-31 14:00:00','评估统考2');
+insert into judgegrant values(null,2,2);
+insert into judgegrant values(null,5,2);
+insert into judgegrant values(null,2,4);
 insert into examdo values(null,1,1,0,0);
 insert into examdo values(null,1,3,0,0);
 insert into examdo values(null,3,1,0,0);

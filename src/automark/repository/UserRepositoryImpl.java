@@ -33,8 +33,14 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public List<User> findStudentsByClassId(int cid) {
-		
-		return null;
+		String sql="select u.* from study s, user u where s.uid = u.uid and s.cid = ?";
+		return jdbcTemplate.query(sql,new UserMapper(),cid);
+	}
+
+	@Override
+	public List<User> findAllTeachers() {
+		String sql="select * from user where type = 2";
+		return jdbcTemplate.query(sql, new UserMapper());
 	}
 
 }

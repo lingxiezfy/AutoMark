@@ -69,14 +69,11 @@
 						<span class="glyphicon glyphicon-time"></span>
 						<c:set var="nowDate" value="<%=System.currentTimeMillis()%>"></c:set> 
 						<span id="restTime"></span>
-						<button type="button" class="btn btn-primary">交卷</button>
+						<button type="button" id="examsubmit" class="btn btn-primary">交卷</button>
 					</div>
 				</h1>
 			</div>
 			<div class="my-nav-buttom clearfix">
-				<input type="hidden" name="upIndex" id="upIndex" value="-1" />
-				<input type="hidden" name="nowIndex" id="nowIndex" value="0" />
-				<input type="hidden" name="nextIndex" id="nextIndex" value="1" />
 				<c:if test="${ nowstatus ==1}">
 					<c:set var="upDisable" value="disabled"></c:set>
 				</c:if>
@@ -99,16 +96,18 @@
 						<div> ${examDetail.question.description}</div>
 					</div>
 				</div>
+				<form id="answerform">
 				<div class="row my-code-content">
 				<div class="col-lg-8">
-					<form>
-						<input type="hidden" name="qid" value="${examDetail.question.qid}"/>
-						<input type="hidden" name="qtid" value="${examDetail.question.qtid}"/>
-						<input type="hidden" name="jtid" value="${examDetail.question.jtid}"/>
-						<input type="hidden" name="score" value="${examDetail.score}"/>
+					
+						<input type="hidden" name="edtid" value='${examDetail.examDoDetail.edtid}'/>
+						<input type="hidden" name="qid" value='${examDetail.question.qid}'/>
+						<input type="hidden" name="qtid" value='${examDetail.question.qtid}'/>
+						<input type="hidden" name="jtid" value='${examDetail.question.jtid}'/>
+						<input type="hidden" name="score" value='${examDetail.score}'/>
 						<div class="form-group">
 							<label>选择代码：</label>
-							<select name="answerType">
+							<select name="answertype">
 								<option value="1">html</option>
 								<option value="2">java</option>
 								<option value="3">jsp</option>
@@ -119,24 +118,25 @@
 						</div>
 
 						<div class="form-group">
-							<textarea id="stuanswer" name="stuAnswer">${examDetail.examDoDetail.stuAnswer}</textarea>
+							<textarea id="stuanswer">${examDetail.examDoDetail.stuAnswer}</textarea>
 						</div>
-						<button id="test_btn" class="btn btn-success">测试</button>
-						<button id="save_btn" class="btn btn-warning">保存</button>
-					</form>
+						
+					
+					<button id="test_btn" class="btn btn-success">测试</button>
+					&nbsp;<b id="resultMsg"></b>
 				</div>
 				<div class="col-lg-4">
-					<form>
 						<div class="form-group">
 							<label>结果查看：</label>
 						</div>
-
+						
 						<div class="form-group my-disabled">
-							<textarea id="result" >${examDetail.examDoDetail.autoResult}</textarea>
+							<textarea id="result">${examDetail.examDoDetail.autoResult}</textarea>
 						</div>
-					</form>
+					
 				</div>
 				</div>
+				</form>
 			</div>
 
 		</div>
@@ -164,7 +164,37 @@
 				lineNumbers: true,
 				theme: "eclipse"
 			});
-			
+			$('#test_btn').click(function(){
+				
+				$.ajax({
+					url:"<%=request.getContextPath() %>/json/exam/test",
+					type:"POST",
+					data: $("#answerform").serialize()+"&stuanswer="+editor.getValue(),
+					dataType:"json",
+					success:function(data){
+						result.setValue(data.autoResult);
+						$('#resultMsg').html("已保存最后提交！");
+					},
+					error:function(){
+						$('#resultMsg').html("超时！");
+					}
+				})
+				return false;
+			});
+			$('#examsubmit').click(function(){
+				
+				$.ajax({
+					url:"<%=request.getContextPath() %>/exam/student/submit",
+					type:"POST",
+					async:false,
+					data: $("#answerform").serialize()+"&stuanswer="+editor.getValue(),
+					success:function(data){
+						window.location.href="<%=request.getContextPath() %>/exam/student";
+					},
+					error:function(){
+					}
+				})
+			});
 			$(function() {
 				var timeMills = ${nowExam.endTime.time-nowDate};
 				setInterval(function () {
@@ -173,8 +203,17 @@
 				    var seconds = parseInt(timeMills / 1000 %3600 % 60);
 				    $('#restTime').html(hour+ ":"+minute+":"+seconds);
 				    timeMills = timeMills-1000;
+				    if(timeMills <= 0){
+				    	window.location.href="<%=request.getContextPath() %>/exam/student";
+				    }
 				}, 1000);
+				
 			});
+			
+			
+			
+			
+			
 		</script>
 
 	</body>

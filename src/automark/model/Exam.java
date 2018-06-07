@@ -2,13 +2,18 @@ package automark.model;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class Exam {
 	private int eid;
 	private int pid;
+	private int uid;
 	private User examTeacher;
 	private int type;
 	private String title;
+	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
 	private Date startTime;
+	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
 	private Date endTime;
 	public int getEid() {
 		return eid;
@@ -52,5 +57,11 @@ public class Exam {
 	}
 	public void setPid(int pid) {
 		this.pid = pid;
+	}
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 }
