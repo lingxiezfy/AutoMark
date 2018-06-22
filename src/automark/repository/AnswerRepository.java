@@ -11,5 +11,9 @@ public interface AnswerRepository {
 	 * @return
 	 */
 	List<Answer> findAnswersByQid(int qid);
-
+	int add(Answer answer);
+	int delete(int aid);
+	int deleteAllByQid(int qid);
+	int update(Answer answer);
+	List<Integer> fingAnswersIdSeqByQid(int qid);
 }

@@ -32,7 +32,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	<!-- 访问以下静态资源时不需要经过前端控制器DispatcherServlet -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	
-	 <!-- 数据库连接属性文件配置 -->
+	<!-- 数据库连接属性文件配置 -->
     <context:property-placeholder location="classpath:automark/data/db.properties" system-properties-mode="OVERRIDE"/>
 
     <!-- 基于tomcat连接池的数据源配置 -->

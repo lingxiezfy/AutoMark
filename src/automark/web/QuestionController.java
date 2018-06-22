@@ -130,6 +130,10 @@ public class QuestionController {
 	public Message jsonQuestionSave(Question question,HttpSession session) {
 		int count = 0;
 		System.out.println("qid:"+question.getQid() +" desc :"+ question.getDescription());
+		System.out.println("答案数量："+question.getAnswers().size());
+		for (Answer answer : question.getAnswers()) {
+			System.out.println(answer.getAid());
+		}
 		if(question.getQid() == 0) {
 			//新增
 			User user = (User) session.getAttribute("user");

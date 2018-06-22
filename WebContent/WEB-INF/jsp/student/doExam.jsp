@@ -108,20 +108,20 @@
 						<div class="form-group">
 							<label>选择代码：</label>
 							<select name="answertype">
-								<option value="1">html</option>
 								<option value="2">java</option>
+								<option value="1">html</option>
 								<option value="3">jsp</option>
 								<option value="4">javascript</option>
 								<option value="5">C</option>
 								<option value="6">C++</option>
 							</select>
+							&nbsp;<b style="color:red;">请勿添加包名，并以Main作为主类名，以main方法作为主方法</b>
 						</div>
 
 						<div class="form-group">
 							<textarea id="stuanswer">${examDetail.examDoDetail.stuAnswer}</textarea>
 						</div>
 						
-					
 					<button id="test_btn" class="btn btn-success">测试</button>
 					&nbsp;<b id="resultMsg"></b>
 				</div>
@@ -148,12 +148,6 @@
 
 		<script type="application/javascript">
 			var editor = CodeMirror.fromTextArea(document.getElementById("stuanswer"), {
-				
-				mode: "text/x-csrc",
-				mode: "text/x-c++src",
-				mode: "text/css",
-				mode: "text/javascript",
-				mode: "text/html",
 				mode: "text/x-java",
 				lineNumbers: true,
 				theme: "eclipse"
@@ -209,10 +203,6 @@
 				}, 1000);
 				
 			});
-			
-			
-			
-			
 			
 		</script>
 

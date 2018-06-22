@@ -1,5 +1,7 @@
 package automark.model;
 
+import java.util.List;
+
 public class Question {
 	private int qid;
 	private int uid;
@@ -8,6 +10,7 @@ public class Question {
 	private int readGrant;
 	private String title;
 	private String description;
+	private List<Answer> answers;
 	public int getQid() {
 		return qid;
 	}
@@ -49,5 +52,11 @@ public class Question {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public List<Answer> getAnswers() {
+		return answers;
+	}
+	public void setAnswers(List<Answer> answers) {
+		this.answers = answers;
 	}
 }

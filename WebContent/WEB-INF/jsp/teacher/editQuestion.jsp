@@ -83,34 +83,35 @@
 							<c:if test="${question.jtid == 3}">
 								<c:forEach items="${answers}" var="item" varStatus="status">
 								<div class="form-group">
-								<label class="col-sm-2 control-label">用例${status.index+1 }</label>
-								<div class="col-sm-3">
-									<input type="text" class="form-control" id="title" name="input[]" placeholder="输入" value="${item.input }">
-								</div>
-								<div class="col-sm-3">
-									<input type="text" class="form-control" id="title" name="input[]" placeholder="输出" value="${item.output }">
-								</div>
-								<c:choose>
-									<c:when test="${(status.index+1)==fn:length(answers)}">
-										<div class="col-sm-1">
-											<button type="button" class="btn btn-danger ">
-												<span class="glyphicon glyphicon-minus-sign"></span>
-											</button>
-										</div>
-										<div class="col-sm-1">
-											<button type="button" class="btn btn-primary ">
-												<span class="glyphicon glyphicon-plus-sign"></span>
-											</button>
-										</div>
-									</c:when>
-									<c:when test="${(status.index+1)<fn:length(answers)}">
-										<div class="col-sm-2">
-											<button type="button" class="btn btn-danger ">
-												<span class="glyphicon glyphicon-minus-sign"></span>
-											</button>
-										</div>
-									</c:when>
-								</c:choose>
+									<input type="hidden" name="answers[${status.index }].aid" value="${item.aid }">
+									<label class="col-sm-2 control-label">用例${status.index+1 }</label>
+									<div class="col-sm-3">
+										<input type="text" class="form-control" id="title" name="answers[${status.index }].input" placeholder="输入" value="${item.input }">
+									</div>
+									<div class="col-sm-3">
+										<input type="text" class="form-control" id="title" name="answers[${status.index }].output" placeholder="输出" value="${item.output }">
+									</div>
+									<c:choose>
+										<c:when test="${(status.index+1)==fn:length(answers)}">
+											<div class="col-sm-1">
+												<button type="button" class="btn btn-danger ">
+													<span class="glyphicon glyphicon-minus-sign"></span>
+												</button>
+											</div>
+											<div class="col-sm-1">
+												<button type="button" class="btn btn-primary ">
+													<span class="glyphicon glyphicon-plus-sign"></span>
+												</button>
+											</div>
+										</c:when>
+										<c:when test="${(status.index+1)<fn:length(answers)}">
+											<div class="col-sm-2">
+												<button type="button" class="btn btn-danger ">
+													<span class="glyphicon glyphicon-minus-sign"></span>
+												</button>
+											</div>
+										</c:when>
+									</c:choose>
 								</div>
 								</c:forEach>
 							</c:if>
@@ -180,6 +181,8 @@
 					}
 				})
 			});
+			
+			var answerCount = "fn:length(answers)	";
 			
 		</script>
 

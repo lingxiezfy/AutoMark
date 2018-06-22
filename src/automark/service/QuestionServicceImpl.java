@@ -74,12 +74,44 @@ public class QuestionServicceImpl implements QuestionService {
 
 	@Override
 	public int addQuestion(Question question) {
-		return questionRepository.addQuestion(question);
+		int result = questionRepository.addQuestion(question);
+		if(result > 0 && question.getJtid() == 3) {
+			List<Question> list = questionRepository.findQuestionByTitle(question.getTitle());
+			question = list.get(0);
+			for (Answer answer : question.getAnswers()) {
+				answer.setQid(question.getQid());
+				answerRepository.add(answer);
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public int updateQuestion(Question question) {
-		return questionRepository.updateQuestion(question);
+		int result = questionRepository.updateQuestion(question);
+		if(result > 0 && question.getJtid() == 3) {
+			List<Integer> oldAids = answerRepository.fingAnswersIdSeqByQid(question.getQid());
+			List<Answer> answers = question.getAnswers();
+			for (Answer answer : answers) {
+				answer.setQid(question.getQid());
+				if(answer.getAid() == 0) {
+					answerRepository.add(answer);
+				}
+			}
+			for(int i = 0;i<oldAids.size();i++) {
+				int j ;
+				for (j=0;j< answers.size();j++) {
+					if(answers.get(j).getAid() == oldAids.get(i)) {
+						answerRepository.update(answers.get(j));
+						break;
+					}
+				}
+				if(j == answers.size()) {
+					answerRepository.delete(oldAids.get(i));
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override

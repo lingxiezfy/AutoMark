@@ -83,5 +83,7 @@ public interface QuestionRepository {
  * @return
  */
 	List<Question> findQuestionsAll(int uid);
+	
+	List<Question> findQuestionByTitle(String title);
 
 }

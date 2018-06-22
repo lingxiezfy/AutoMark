@@ -105,5 +105,10 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 		String sql="select * from question q where q.uid= ? or q.readgrant=2 ";
 		return jdbcTemplate.query(sql, new QuestionMapper(),uid);
 	}
+	@Override
+	public List<Question> findQuestionByTitle(String title) {
+		String sql="select * from question where title=? ";
+		return jdbcTemplate.query(sql, new QuestionMapper(),title);
+	}
 
 }

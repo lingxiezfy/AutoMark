@@ -1,11 +1,28 @@
 package automark.service;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.List;
+
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+import javax.tools.JavaCompiler.CompilationTask;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import automark.compiler.DynamicEngine;
 import automark.dto.AccessExamDto;
 import automark.dto.ExamDetailDto;
 import automark.dto.ExamInfoDto;
@@ -77,6 +94,7 @@ public class ExamServiceImpl implements ExamService{
 	@Override
 	public ExamDoDetail testCode(int edtid, int qid, int qtid, int jtid, int score, int answertype,
 			String stuanswer) {
+		System.out.println(edtid+","+qid+","+qtid+","+jtid+","+score+","+answertype+"\""+stuanswer+"\"");
 		ExamDoDetail examDoDetail = new ExamDoDetail();
 		int autograde = 0 ;
 		String autoresult ="";
@@ -87,21 +105,61 @@ public class ExamServiceImpl implements ExamService{
 			autograde = (int)(score * 0.8);
 			autoresult="执行耗时：0.5秒\n执行通过！";
 		}else if(jtid == 3) {
+			//获取测试用例列表
 			List<Answer> answerList = answerRepository.findAnswersByQid(qid);
-			autograde = (int)(score * 0.6);
+			//记录评分
+			autograde = 0;
+			//记录错误数
 			int error = 0;
-			//一一检验测试用例记录未通过的测试用例
-			for (Answer answer : answerList) {
-				if(Math.random() - 0.5 <=0) {
-					error++;
-				}
-			}
-			autograde = (int)(score * ((answerList.size()-error)/answerList.size()));
-			autoresult="算法：\n  耗时：0.8秒  \n" ;
-			if(error == 0) {
-				autoresult += "测试通过！";
+			if(answerList.size() == 0) {
+				autoresult += "暂无测试用例，请等待手动批阅";
 			}else {
-				autoresult += "未通过：失败  "+error+" ";
+				try {
+					String className ="Main";
+					DynamicEngine de = DynamicEngine.getInstance(); 
+					String result = de.javaCodeCompile(className, stuanswer);
+					if(result == null) {
+					//编译成功
+						long start = System.currentTimeMillis(); 
+						Object object = de.javaCodeToObject(className, stuanswer);
+						long end = System.currentTimeMillis(); 
+						autoresult += "编译成功，用时:" + (end - start) + "ms\n";
+						System.out.println("编译成功，用时:" + (end - start) + "ms\n");
+						//获取编译类
+						Class<?> c = de.getCompilerClass();
+						
+				        //一一检验测试用例，记录未通过的测试用例
+						for (Answer answer : answerList) {
+							//输入及输出重定向
+							PrintStream outStream = System.out;
+							System.setIn(new ByteArrayInputStream(answer.getInput().getBytes()));
+							ByteArrayOutputStream outContent = new ByteArrayOutputStream();  
+					        System.setOut(new PrintStream(outContent)); 
+							//反射执行
+					        Method method = c.getMethod("main",String[].class);
+					        method.invoke(object,(Object)new String[] {});
+					        //获取输出并判断结果
+					        if(!outContent.toString().trim().equals(answer.getOutput().trim())) {
+					        	error ++;
+					        }
+					        System.setOut(outStream);
+					        System.out.println(outContent.toString());
+						}
+						if(error == 0) {
+							autoresult += "测试通过！\n";
+						}else {
+							autoresult += "测试未通过：失败  "+error+"个用例";
+						}
+						autograde = (int)(score * ((answerList.size()-error)/answerList.size()));
+						autoresult +="评分:"+ autograde +"/"+score;
+					}else {
+					//编译失败
+						autoresult += "编译失败:\n" + result;
+						System.out.println("编译失败:\n" + result);
+					}
+				}catch (Exception e) {
+					autoresult += "系统暂时不可用，请联系管理员！";
+				}
 			}
 		}
 		
@@ -111,7 +169,8 @@ public class ExamServiceImpl implements ExamService{
 		examDoDetail.setAutoResult(autoresult);
 		return examDoDetail;
 	}
-
+	
+	
 	@Override
 	public void setNowStatus(int edid, int nowstatus) {
 		examRepository.setNowStatus(edid, nowstatus);
