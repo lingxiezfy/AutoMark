@@ -80,42 +80,35 @@
 									</select>
 								</div>
 							</div>
+							<!-- 测试用例 -->
+							<div id="usecase">
 							<c:if test="${question.jtid == 3}">
 								<c:forEach items="${answers}" var="item" varStatus="status">
 								<div class="form-group">
-									<input type="hidden" name="answers[${status.index }].aid" value="${item.aid }">
+									<input type="hidden" id="aid" name="answers[${status.index }].aid" value="${item.aid }">
 									<label class="col-sm-2 control-label">用例${status.index+1 }</label>
 									<div class="col-sm-3">
-										<input type="text" class="form-control" id="title" name="answers[${status.index }].input" placeholder="输入" value="${item.input }">
+										<input type="text" class="form-control" id="input" name="answers[${status.index }].input" placeholder="输入" value="${item.input }">
 									</div>
 									<div class="col-sm-3">
-										<input type="text" class="form-control" id="title" name="answers[${status.index }].output" placeholder="输出" value="${item.output }">
+										<input type="text" class="form-control" id="output" name="answers[${status.index }].output" placeholder="输出" value="${item.output }">
 									</div>
-									<c:choose>
-										<c:when test="${(status.index+1)==fn:length(answers)}">
-											<div class="col-sm-1">
-												<button type="button" class="btn btn-danger ">
-													<span class="glyphicon glyphicon-minus-sign"></span>
-												</button>
-											</div>
-											<div class="col-sm-1">
-												<button type="button" class="btn btn-primary ">
-													<span class="glyphicon glyphicon-plus-sign"></span>
-												</button>
-											</div>
-										</c:when>
-										<c:when test="${(status.index+1)<fn:length(answers)}">
-											<div class="col-sm-2">
-												<button type="button" class="btn btn-danger ">
-													<span class="glyphicon glyphicon-minus-sign"></span>
-												</button>
-											</div>
-										</c:when>
-									</c:choose>
+									<div class="col-sm-1">
+										<button type="button" class="btn btn-danger" id="removeCase_btn" onclick="removeCase(this,${status.index })" >
+											<span class="glyphicon glyphicon-minus-sign"></span>
+										</button>
+									</div>	
+									<c:if test="${(status.index+1)==fn:length(answers)}">
+										<div class="col-sm-1">
+											<button type="button" class="btn btn-primary " id="addCase_btn" onclick="addCase(this)">
+												<span class="glyphicon glyphicon-plus-sign"></span>
+											</button>
+										</div>
+									</c:if>
 								</div>
 								</c:forEach>
 							</c:if>
-							
+							</div>
 							<div class="form-group">
 								<label for="title" class="col-sm-2 control-label">标题</label>
 								<div class="col-sm-10">
@@ -138,16 +131,33 @@
 						
 						
 						<div class="col-sm-offset-2 col-sm-10">
-									<button id="save" class="btn btn-primary">保存</button>
-									<b id="msg"></b>
-								</div>
+							<button id="save" class="btn btn-primary">保存</button>
+							<b id="msg"></b>
+						</div>
 						
 						<!-- 表单结束 -->
 					</div>
 				</div>
 			</div>
 		</div>
-
+				<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">提示</h4>
+					</div>
+					<div class="modal-body">
+						至少保留一个测试用例
+					</div>
+					<div class="modal-footer">
+						<b id="msg"></b>
+						<button id="refusebtn" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
 		<script src="<%=request.getContextPath() %>/resources/js/jquery-3.2.1.min.js"></script>
 		<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
@@ -182,8 +192,83 @@
 				})
 			});
 			
-			var answerCount = "fn:length(answers)	";
+			var answerCount = "${fn:length(answers)}";
 			
+			$('#judgeType').bind("change",function(){
+				if($('#judgeType').val() == 3){
+					if(answerCount == 0){
+						appendCase(0);
+						answerCount = parseInt(answerCount)+1;
+					}else{
+						$("#usecase").show();
+					}
+				}else{
+					$("#usecase").hide();
+				}
+			});
+			
+			function removeCase(obj,index) {
+				if(answerCount > 1){
+					answerCount = parseInt(answerCount)-1;
+					if(index == answerCount){
+						appendAdd($(obj).parent().parent().prev());
+					}
+					updateNext($(obj).parent().parent().next(),index);
+					$(obj).parent().parent().remove();
+				}else{
+					$('#myModal').modal('show');
+				}
+			}
+			function updateNext(obj,index){
+				if(index ==answerCount){
+					return ;
+				}
+				$("label",obj).html("用例"+(parseInt(index)+1));	
+				$("#aid",obj).attr("name","answers["+index+"].aid");
+				$("#input",obj).attr("name","answers["+index+"].input");
+				$("#output",obj).attr("name","answers["+index+"].output");
+				$("#removeCase_btn",obj).attr("onclick","removeCase(this,"+index+")");
+				updateNext(obj.next(),(parseInt(index)+1));
+				
+			}
+			function appendAdd(obj){
+				var str = "";
+				str += "<div class='col-sm-1'>";
+				str += "<button type='button' class='btn btn-primary' id='addCase_btn' onclick='addCase(this)'>";
+				str += "<span class='glyphicon glyphicon-plus-sign'></span>";
+				str += "</button>";
+				str += "</div>";
+				$(obj).append(str);
+			}
+			function addCase(obj){
+				$(obj).parent().remove();
+				appendCase(answerCount);
+				answerCount = parseInt(answerCount)+1;
+			}
+			function appendCase(oldSize){
+				var str = "";
+				str += "<div class='form-group'>";
+				str += "<input type='hidden' id='aid' name='answers["+oldSize+"].aid' value='0'>";
+				str += "<label class='col-sm-2 control-label'>用例"+(parseInt(oldSize)+1)+"</label>";
+				str += "<div class='col-sm-3'>";
+				str += "<input type='text' class='form-control' id='input' name='answers["+oldSize+"].input' placeholder='输入'>";
+				str += "</div>";
+				str += "<div class='col-sm-3'>";
+				str += "<input type='text' class='form-control' id='output' name='answers["+oldSize+"].output' placeholder='输出' >";
+				str += "</div>";
+				str += "<div class='col-sm-1'>";
+				str += "<button type='button' class='btn btn-danger' id='removeCase_btn' onclick='removeCase(this,"+oldSize+")' >";
+				str += "<span class='glyphicon glyphicon-minus-sign'></span>";
+				str += "</button>";
+				str += "</div>";
+				str += "<div class='col-sm-1'>";
+				str += "<button type='button' class='btn btn-primary' id='addCase_btn' onclick='addCase(this)'>";
+				str += "<span class='glyphicon glyphicon-plus-sign'></span>";
+				str += "</button>";
+				str += "</div>";
+				str += "</div>";
+				$("#usecase").append(str);
+			}
 		</script>
 
 	</body>

@@ -107,6 +107,7 @@ public class ExamServiceImpl implements ExamService{
 		}else if(jtid == 3) {
 			//获取测试用例列表
 			List<Answer> answerList = answerRepository.findAnswersByQid(qid);
+			System.out.println("测试用例数："+answerList.size());
 			//记录评分
 			autograde = 0;
 			//记录错误数
@@ -148,9 +149,10 @@ public class ExamServiceImpl implements ExamService{
 						if(error == 0) {
 							autoresult += "测试通过！\n";
 						}else {
-							autoresult += "测试未通过：失败  "+error+"个用例";
+							autoresult += "测试未通过：失败  "+error+"个用例\n";
 						}
-						autograde = (int)(score * ((answerList.size()-error)/answerList.size()));
+						double pre = (answerList.size()-error)/(answerList.size()*1.0);
+						autograde = (int)(score * pre);
 						autoresult +="评分:"+ autograde +"/"+score;
 					}else {
 					//编译失败

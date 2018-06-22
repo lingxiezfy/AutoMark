@@ -91,7 +91,7 @@ insert into makepaper values(null,1,3,40);
 insert into makepaper values(null,2,4,30);
 insert into makepaper values(null,2,5,30);
 insert into makepaper values(null,2,6,30);
-insert into exam values (null,1,2,1,'2018-6-22 07:00:00','2018-6-22 14:00:00','平时测试1');
+insert into exam values (null,1,2,1,'2018-6-23 03:00:00','2018-6-23 14:00:00','平时测试1');
 insert into exam values (null,2,5,2,'2018-6-11 05:00:00','2018-06-11 21:00:00','评估统考1');
 insert into exam values (null,1,5,1,'2018-5-29 12:00:00','2018-5-29 14:00:00','平时测试2');
 insert into exam values (null,1,2,2,'2018-5-25 12:00:00','2018-5-31 14:00:00','评估统考2');

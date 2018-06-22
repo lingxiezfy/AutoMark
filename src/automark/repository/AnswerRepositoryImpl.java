@@ -17,7 +17,7 @@ public class AnswerRepositoryImpl implements AnswerRepository{
 	private JdbcTemplate jdbcTemplate ;
 	@Override
 	public List<Answer> findAnswersByQid(int qid) {
-		String sql = "select * from answer where qid = ? ";
+		String sql = "select * from answer where qid = ? order by aid";
 		List<Answer> list = jdbcTemplate.query(sql, new AnswerMapper() ,qid);
 		return list;
 	}

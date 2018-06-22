@@ -86,7 +86,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 	}
 	@Override
 	public List<Answer> findAnswersByQuestionId(int qid) {
-		String sql = "select * from answer where qid = ? ";
+		String sql = "select * from answer where qid = ? order by aid";
 		List<Answer> list = jdbcTemplate.query(sql, new AnswerMapper() ,qid);
 		return list;
 	}
